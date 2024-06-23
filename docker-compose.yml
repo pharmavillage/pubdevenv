@@ -1,4 +1,3 @@
-version: '3.5'
 services:
   ui:
     container_name: airsend.ui
@@ -152,7 +151,6 @@ services:
       API_BASE_URI: ${API_BASE_URI:-http://web/api/v1/}
       APP_INTERNAL_AUTH_TOKEN: ${APP_INTERNAL_AUTH_TOKEN:-}
 
-
   kafkaworkerhighpriority: # kafka worker high priority
     container_name: airsend.kafka.worker.high
     build:
@@ -160,8 +158,8 @@ services:
     volumes:
       - oauth-volume:/var/www/airsend/resources/oauth
       - ./api:/var/www/airsend:${CACHING_OPTION:-cached}
-#    deploy:
-#      replicas: 1
+    #    deploy:
+    #      replicas: 1
     restart: always
     environment:
       PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/var/www/dev/vendor/bin
@@ -259,14 +257,14 @@ services:
       - db
 
   kafkaworkerlowpriority: # kafka worker low priority
-    container_name: airsend.kafka.worker.high
+    container_name: airsend.kafka.worker.low
     build:
       context: env/kafkaworker
     volumes:
       - oauth-volume:/var/www/airsend/resources/oauth
       - ./api:/var/www/airsend:${CACHING_OPTION:-cached}
-#    deploy:
-#      replicas: 1
+    #    deploy:
+    #      replicas: 1
     restart: always
     environment:
       PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/var/www/dev/vendor/bin
@@ -386,30 +384,30 @@ services:
       - zookeeper
       - kafka
 
-#  webrtc:
-#    build:
-#      context: env/common/webrtc
-#    volumes:
-#      - ./server/webrtc:/server:${CACHING_OPTION:-cached}
-#      - ./server/websocket/ssl:/server/ssl
-#    environment:
-#      AIRSEND_DEPLOYMENT_HOSTNAME: ${AIRSEND_DEPLOYMENT_HOSTNAME:-localhost}
-#      AIRSEND_WEBRTC_PORT: ${AIRSEND_WEBRTC_PORT:-9002}
-#      AIRSEND_REDIS_HOST: ${AIRSEND_REDIS_HOST:-redis}
-#      AIRSEND_REDIS_PORT: ${AIRSEND_REDIS_PORT:-6379}
-#      AIRSEND_API_ENDPOINT: ${AIRSEND_API_ENDPOINT:-http://web}
-#      AIRSEND_WEBRTC_MIN_PORT: ${AIRSEND_WEBRTC_MIN_PORT:-40000}
-#      AIRSEND_WEBRTC_MAX_PORT: ${AIRSEND_WEBRTC_MAX_PORT:-40030}
-#      AIRSEND_WEBRTC_LOG_LEVEL: ${AIRSEND_WEBRTC_LOG_LEVEL:-warn}
-#    ports:
-#      - target: 9002
-#        published: 9002
-#        protocol: tcp
-#        mode: host
-#      - "40000-40030:40000-40030/udp"
-#    restart: on-failure
-#    depends_on:
-#      - redis
+  #  webrtc:
+  #    build:
+  #      context: env/common/webrtc
+  #    volumes:
+  #      - ./server/webrtc:/server:${CACHING_OPTION:-cached}
+  #      - ./server/websocket/ssl:/server/ssl
+  #    environment:
+  #      AIRSEND_DEPLOYMENT_HOSTNAME: ${AIRSEND_DEPLOYMENT_HOSTNAME:-localhost}
+  #      AIRSEND_WEBRTC_PORT: ${AIRSEND_WEBRTC_PORT:-9002}
+  #      AIRSEND_REDIS_HOST: ${AIRSEND_REDIS_HOST:-redis}
+  #      AIRSEND_REDIS_PORT: ${AIRSEND_REDIS_PORT:-6379}
+  #      AIRSEND_API_ENDPOINT: ${AIRSEND_API_ENDPOINT:-http://web}
+  #      AIRSEND_WEBRTC_MIN_PORT: ${AIRSEND_WEBRTC_MIN_PORT:-40000}
+  #      AIRSEND_WEBRTC_MAX_PORT: ${AIRSEND_WEBRTC_MAX_PORT:-40030}
+  #      AIRSEND_WEBRTC_LOG_LEVEL: ${AIRSEND_WEBRTC_LOG_LEVEL:-warn}
+  #    ports:
+  #      - target: 9002
+  #        published: 9002
+  #        protocol: tcp
+  #        mode: host
+  #      - "40000-40030:40000-40030/udp"
+  #    restart: on-failure
+  #    depends_on:
+  #      - redis
 
   nodeutil:
     container_name: airsend.nodeutil
@@ -424,17 +422,16 @@ services:
       APP_ADMIN_PASSWORD: ${APP_ADMIN_PASSWORD:-}
       FCM_ENABLED: ${FCM_ENABLED:-0}
 
-
   db:
     container_name: airsend.db
     image: mysql/mysql-server
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: '${AIRSEND_DB_ROOT_PASSWORD:-root}'
-      MYSQL_ROOT_HOST: '%'
+      MYSQL_ROOT_PASSWORD: "${AIRSEND_DB_ROOT_PASSWORD:-root}"
+      MYSQL_ROOT_HOST: "%"
     ports:
-      - '${AIRSEND_DB_EXPOSED_PORT:-20002}:3306'
+      - "${AIRSEND_DB_EXPOSED_PORT:-20002}:3306"
     volumes:
       - database-volume:/var/lib/mysql
       - ./env/db/conf.d:/etc/mysql/conf.d:${CACHING_OPTION:-cached}
@@ -443,7 +440,7 @@ services:
     container_name: airsend.redis
     image: redis:5
     ports:
-      - '${AIRSEND_REDIS_PORT:-6379}:6379'
+      - "${AIRSEND_REDIS_PORT:-6379}:6379"
 
   zookeeper:
     container_name: airsend.zookeeper
