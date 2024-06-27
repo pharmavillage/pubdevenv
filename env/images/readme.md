@@ -1,1 +1,0 @@
-This directory holds all the images linked on the environment readme file on the root of the repo.

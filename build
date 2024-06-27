@@ -1,22 +1,16 @@
 #!/bin/bash
 
 # Constants
-DEFAULT_PORTS=("AIRSEND_API_EXPOSED_PORT" "AIRSEND_WEBSOCKET_PORT" "AIRSEND_DB_EXPOSED_PORT" "AIRSEND_REDIS_PORT" "AIRSEND_XDEBUG_PORT" "AIRSEND_ZOOKEEPER_PORT" "AIRSEND_KAFKA_PORT" "AIRSEND_SWAGGER_PORT")
+DEFAULT_PORTS=("AIRSEND_API_EXPOSED_PORT" "AIRSEND_PHARMAVILLAGE_IO_PORT" "AIRSEND_DB_EXPOSED_PORT" "AIRSEND_REDIS_PORT" "AIRSEND_XDEBUG_PORT" "AIRSEND_ZOOKEEPER_PORT" "AIRSEND_KAFKA_PORT" "AIRSEND_SWAGGER_PORT")
 DOCKER_MIN_MAJOR_VERSION=19
 DOCKER_MIN_MINOR_VERSION=15
-API_REPOSITORY_SSH=git@github.com:pharmavillage/api.git
-API_REPOSITORY_HTTP=https://github.com/pharmavillage/api.git
-UI_REPOSITORY_SSH=git@github.com:pharmavillage/ui.git
-UI_REPOSITORY_HTTP=https://github.com/pharmavillage/ui.git
-NODEUTIL_REPOSITORY_SSH=git@github.com:pharmavillage/nodeutil.git
-NODEUTIL_REPOSITORY_HTTP=https://github.com/pharmavillage/nodeutil.git
-WEBSOCKET_REPOSITORY_SSH=git@github.com:pharmavillage/websocket.git
-WEBSOCKET_REPOSITORY_HTTP=https://github.com/pharmavillage/websocket.git
+DOCUMENTATION_REPOSITORY_SSH=git@github.com:pharmavillage/documentation.git
+DOCUMENTATION_REPOSITORY_HTTP=https://github.com/pharmavillage/documentation.git
+PHARMAVILLAGE_IO_REPOSITORY_SSH=git@github.com:pharmavillage/pharmavillage_io.git
+PHARMAVILLAGE_IO_REPOSITORY_HTTP=https://github.com/pharmavillage/pharmavillage_io.git
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
-API_DIR="$SCRIPT_DIR/api"
-UI_DIR="$SCRIPT_DIR/ui"
-NODEUTIL_DIR="$SCRIPT_DIR/nodeutil"
-WEBSOCKET_DIR="$SCRIPT_DIR/websocket"
+DOCUMENTATION_DIR="$SCRIPT_DIR/documentation"
+PHARMAVILLAGE_IO_DIR="$SCRIPT_DIR/pharmavillage_io"
 
 # Helper functions
 title () {
@@ -66,7 +60,7 @@ clone () {
 
 # default ports
 AIRSEND_API_EXPOSED_PORT=20000
-AIRSEND_WEBSOCKET_PORT=20001
+AIRSEND_PHARMAVILLAGE_IO_PORT=20001
 AIRSEND_DB_EXPOSED_PORT=20002
 AIRSEND_REDIS_PORT=20003
 AIRSEND_XDEBUG_PORT=20004
@@ -169,10 +163,8 @@ title "Checking github.com ssh config (you may have to enter your private key pa
 
 if ssh -T git@github.com 2>&1 | grep "You've successfully authenticated" > /dev/null 2>/dev/null; then
   echo "Cloning using ssh (best option)..."
-  API_REPOSITORY=$API_REPOSITORY_SSH;
-  UI_REPOSITORY=$UI_REPOSITORY_SSH;
-  NODEUTIL_REPOSITORY=$NODEUTIL_REPOSITORY_SSH;
-  WEBSOCKET_REPOSITORY=$WEBSOCKET_REPOSITORY_SSH;
+  DOCUMENTATION_REPOSITORY=$DOCUMENTATION_REPOSITORY_SSH;
+  PHARMAVILLAGE_IO_REPOSITORY=$PHARMAVILLAGE_IO_REPOSITORY_SSH;
 else
   warning "We can't validate your ssh access to github. It's recommended to use ssh to clone the repositories."
   warning "We can try the https clone, but it's slower and not recommended."
@@ -180,16 +172,13 @@ else
   if [ "$?" != "0" ]; then
     exit 255;
   fi
-  API_REPOSITORY=$API_REPOSITORY_HTTP;
-  UI_REPOSITORY=$UI_REPOSITORY_HTTP;
-  NODEUTIL_REPOSITORY=$NODEUTIL_REPOSITORY_HTTP;
-  WEBSOCKET_REPOSITORY=$WEBSOCKET_REPOSITORY_HTTP;
+  DOCUMENTATION_REPOSITORY=$DOCUMENTATION_REPOSITORY_HTTP;
+  PHARMAVILLAGE_IO_REPOSITORY=$PHARMAVILLAGE_IO_REPOSITORY_HTTP;
 fi
 
-clone "API" "$API_DIR" "$API_REPOSITORY"
-clone "UI" "$UI_DIR" "$UI_REPOSITORY"
-clone "NODEUTIL" "$NODEUTIL_DIR" "$NODEUTIL_REPOSITORY"
-clone "WEBSOCKET" "$WEBSOCKET_DIR" "$WEBSOCKET_REPOSITORY"
+
+clone "DOCUMENTATION" "$DOCUMENTATION_DIR" "$DOCUMENTATION_REPOSITORY"
+clone "PHARMAVILLAGE_IO" "$PHARMAVILLAGE_IO_DIR" "$PHARMAVILLAGE_IO_REPOSITORY"
 
 success "All repositories successfully cloned..."
 
