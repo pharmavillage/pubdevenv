@@ -1,15 +1,3 @@
-services:
-  documentation:
-    container_name: pharmavillage.docs
-    build:
-      context: env/documentation
-    ports:
-      - "${DOCUMENTATION_EXPOSED_PORT:-8000}:8000"
-    volumes:
-      - ./documentation:/docs
-    working_dir: /docs
-    logging:
-      driver: json-file
-      options:
-        max-file: 3
-        max-size: 1m
+include:
+  - documentation/docker-compose.yml
+  - pharmavillage_website/docker-compose.yml

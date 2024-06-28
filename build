@@ -1,16 +1,20 @@
 #!/bin/bash
 
 # Constants
-DEFAULT_PORTS=("AIRSEND_API_EXPOSED_PORT" "AIRSEND_PHARMAVILLAGE_IO_PORT" "AIRSEND_DB_EXPOSED_PORT" "AIRSEND_REDIS_PORT" "AIRSEND_XDEBUG_PORT" "AIRSEND_ZOOKEEPER_PORT" "AIRSEND_KAFKA_PORT" "AIRSEND_SWAGGER_PORT")
+DEFAULT_PORTS=("PHARMAVILLAGE_API_EXPOSED_PORT" "PHARMAVILLAGE_PHARMAVILLAGE_IO_PORT" "PHARMAVILLAGE_DB_EXPOSED_PORT" "PHARMAVILLAGE_REDIS_PORT" "PHARMAVILLAGE_XDEBUG_PORT" "PHARMAVILLAGE_ZOOKEEPER_PORT" "PHARMAVILLAGE_KAFKA_PORT" "PHARMAVILLAGE_SWAGGER_PORT")
 DOCKER_MIN_MAJOR_VERSION=19
 DOCKER_MIN_MINOR_VERSION=15
 DOCUMENTATION_REPOSITORY_SSH=git@github.com:pharmavillage/documentation.git
 DOCUMENTATION_REPOSITORY_HTTP=https://github.com/pharmavillage/documentation.git
+PHARMAVILLAGE_WEBSITE_REPOSITORY_SSH=git@github.com:pharmavillage/pharmavillage_website.git
+PHARMAVILLAGE_WEBSITE_REPOSITORY_HTTP=https://github.com/pharmavillage/pharmavillage_website.git
 PHARMAVILLAGE_IO_REPOSITORY_SSH=git@github.com:pharmavillage/pharmavillage_io.git
 PHARMAVILLAGE_IO_REPOSITORY_HTTP=https://github.com/pharmavillage/pharmavillage_io.git
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 DOCUMENTATION_DIR="$SCRIPT_DIR/documentation"
 PHARMAVILLAGE_IO_DIR="$SCRIPT_DIR/pharmavillage_io"
+PHARMAVILLAGE_WEBSITE_DIR="$SCRIPT_DIR/pharmavillage_website"
+
 
 # Helper functions
 title () {
@@ -59,14 +63,14 @@ clone () {
 }
 
 # default ports
-AIRSEND_API_EXPOSED_PORT=20000
-AIRSEND_PHARMAVILLAGE_IO_PORT=20001
-AIRSEND_DB_EXPOSED_PORT=20002
-AIRSEND_REDIS_PORT=20003
-AIRSEND_XDEBUG_PORT=20004
-AIRSEND_ZOOKEEPER_PORT=20005
-AIRSEND_KAFKA_PORT=20006
-AIRSEND_SWAGGER_PORT=20007
+PHARMAVILLAGE_API_EXPOSED_PORT=20000
+PHARMAVILLAGE_PHARMAVILLAGE_IO_PORT=20001
+PHARMAVILLAGE_DB_EXPOSED_PORT=20002
+PHARMAVILLAGE_REDIS_PORT=20003
+PHARMAVILLAGE_XDEBUG_PORT=20004
+PHARMAVILLAGE_ZOOKEEPER_PORT=20005
+PHARMAVILLAGE_KAFKA_PORT=20006
+PHARMAVILLAGE_SWAGGER_PORT=20007
 #...
 
 # Load .env defined variables (overriding default ones)
@@ -165,6 +169,8 @@ if ssh -T git@github.com 2>&1 | grep "You've successfully authenticated" > /dev/
   echo "Cloning using ssh (best option)..."
   DOCUMENTATION_REPOSITORY=$DOCUMENTATION_REPOSITORY_SSH;
   PHARMAVILLAGE_IO_REPOSITORY=$PHARMAVILLAGE_IO_REPOSITORY_SSH;
+  PHARMAVILLAGE_WEBSITE_REPOSITORY=$PHARMAVILLAGE_WEBSITE_REPOSITORY_SSH;
+
 else
   warning "We can't validate your ssh access to github. It's recommended to use ssh to clone the repositories."
   warning "We can try the https clone, but it's slower and not recommended."
@@ -172,6 +178,7 @@ else
   if [ "$?" != "0" ]; then
     exit 255;
   fi
+  PHARMAVILLAGE_WEBSITE_REPOSITORY=$PHARMAVILLAGE_WEBSITE_REPOSITORY_HTTP;
   DOCUMENTATION_REPOSITORY=$DOCUMENTATION_REPOSITORY_HTTP;
   PHARMAVILLAGE_IO_REPOSITORY=$PHARMAVILLAGE_IO_REPOSITORY_HTTP;
 fi
@@ -179,6 +186,8 @@ fi
 
 clone "DOCUMENTATION" "$DOCUMENTATION_DIR" "$DOCUMENTATION_REPOSITORY"
 clone "PHARMAVILLAGE_IO" "$PHARMAVILLAGE_IO_DIR" "$PHARMAVILLAGE_IO_REPOSITORY"
+clone "PHARMAVILLAGE_WEBISTE" "$PHARMAVILLAGE_WEBSITE_DIR" "$PHARMAVILLAGE_WEBSITE_REPOSITORY"
+
 
 success "All repositories successfully cloned..."
 
@@ -187,6 +196,6 @@ docker compose build
 
 success "Initialization done!"
 
-echo "Now you can use 'docker compose up' to bring all the services up and use Airsend."
+echo "Now you can use 'docker compose up' to bring all the services up and use PHARMAVILLAGE."
 
 ###########################################################
